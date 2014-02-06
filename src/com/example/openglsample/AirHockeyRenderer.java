@@ -86,9 +86,11 @@ public class AirHockeyRenderer implements Renderer {
 
 		MatrixHelper.perspectiveM(projectionMatrix, 45, (float) width / (float) height, 1f, 10f);
 
+	//	setIdentityM(projectionMatrix, 0);
+		
 		setIdentityM(modelMatrix, 0);
 		translateM(modelMatrix, 0, 0f, 0f, -3f);
-		rotateM(modelMatrix, 0, -60f, 1f, 0f, 0f);
+		rotateM(modelMatrix, 0, 0f, 1f, 0f, 0f);
 
 		final float[] temp = new float[16];
 		multiplyMM(temp, 0, projectionMatrix, 0, modelMatrix, 0);
@@ -104,15 +106,15 @@ public class AirHockeyRenderer implements Renderer {
 		// Clear the rendering surface.
 		glClear(GL_COLOR_BUFFER_BIT);
 		// Draw the table.
-		textureProgram.useProgram();
-		textureProgram.setUniforms(projectionMatrix, texture);
-		table.bindData(textureProgram);
-		table.draw();
+//		textureProgram.useProgram();
+//		textureProgram.setUniforms(projectionMatrix, texture);
+//		table.bindData(textureProgram);
+//		table.draw();
 		// Draw the mallets.
-		colorProgram.useProgram();
-		colorProgram.setUniforms(projectionMatrix);
-		mallet.bindData(colorProgram);
-		mallet.draw();
+//		colorProgram.useProgram();
+//		colorProgram.setUniforms(projectionMatrix);
+//		mallet.bindData(colorProgram);
+//		mallet.draw();
 		// Draw the lines
 		colorProgram.useProgram();
 		colorProgram.setUniforms(projectionMatrix);
