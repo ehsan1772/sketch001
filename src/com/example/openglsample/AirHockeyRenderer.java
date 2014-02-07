@@ -10,11 +10,8 @@ package com.example.openglsample;
 
 import static android.opengl.GLES20.GL_COLOR_BUFFER_BIT;
 import static android.opengl.GLES20.glClear;
+import static android.opengl.GLES20.glClearColor;
 import static android.opengl.GLES20.glViewport;
-import static android.opengl.Matrix.multiplyMM;
-import static android.opengl.Matrix.rotateM;
-import static android.opengl.Matrix.setIdentityM;
-import static android.opengl.Matrix.translateM;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
@@ -27,7 +24,6 @@ import util.TextureHelper;
 import android.content.Context;
 import android.opengl.GLSurfaceView.Renderer;
 import android.util.Log;
-import static android.opengl.GLES20.*;
 
 import com.example.openglsample.programs.ColorShaderProgram;
 import com.example.openglsample.programs.TextureShaderProgram;
@@ -43,18 +39,28 @@ public class AirHockeyRenderer implements Renderer {
 	private ColorShaderProgram colorProgram;
 	private int texture;
 	
+	private float mWidth;
+	private float mHeight;
+	private float mAspectRatio;
+	
+	
 	private int floatCounter;
 	
-	private static float[] VERTEX_DATA = {
-	// Order of coordinates: X, Y, R, G, B
-	0f, -0.4f, 0f, 0f, 0f,
-	0.2f, -0.2f, 0f, 0f, 0f,
-	0.3f, 0f, 0f, 0f, 0f,
-	0.2f, 0.2f, 0f, 0f, 0f,
-	0f, 0.4f, 0f, 0f, 0f };
+	private static float[] VERTEX_DATA;
+
+//	private static float[] VERTEX_DATA = {
+//	// Order of coordinates: X, Y, R, G, B
+//	0f, -0.4f, 0f, 0f, 0f,
+//	0.2f, -0.2f, 0f, 0f, 0f,
+//	0.3f, 0f, 0f, 0f, 0f,
+//	0.2f, 0.2f, 0f, 0f, 0f,
+//	0f, 0.4f, 0f, 0f, 0f };
 
 	public AirHockeyRenderer(Context context) {
 		this.context = context;
+		
+		VERTEX_DATA = new float[5000];
+		java.util.Arrays.fill(VERTEX_DATA, -1f);
 	}
 
 	@Override
@@ -65,7 +71,7 @@ public class AirHockeyRenderer implements Renderer {
 		pline = new PLine();
 		textureProgram = new TextureShaderProgram(context);
 		colorProgram = new ColorShaderProgram(context);
-		texture = TextureHelper.loadTexture(context, R.drawable.air_hockey_surface);
+		texture = TextureHelper.loadTexture(context, R.drawable.line);
 	}
 
 	/**
@@ -84,17 +90,22 @@ public class AirHockeyRenderer implements Renderer {
 		// Set the OpenGL viewport to fill the entire surface.
 		glViewport(0, 0, width, height);
 
-		MatrixHelper.perspectiveM(projectionMatrix, 45, (float) width / (float) height, 1f, 10f);
-
-	//	setIdentityM(projectionMatrix, 0);
+		//MatrixHelper.perspectiveM(projectionMatrix, 45, (float) width / (float) height, 1f, 10f);
+		mWidth = width;
+		mHeight = height;
 		
-		setIdentityM(modelMatrix, 0);
-		translateM(modelMatrix, 0, 0f, 0f, -3f);
-		rotateM(modelMatrix, 0, 0f, 1f, 0f, 0f);
-
-		final float[] temp = new float[16];
-		multiplyMM(temp, 0, projectionMatrix, 0, modelMatrix, 0);
-		System.arraycopy(temp, 0, projectionMatrix, 0, temp.length);
+		final float aspectRatio = width > height ?
+				(float) width / (float) height :
+				(float) height / (float) width;
+				if (width > height) {
+				// Landscape
+					android.opengl.Matrix.orthoM(projectionMatrix, 0, -aspectRatio, aspectRatio, -1f, 1f, -1f, 1f);
+				} else {
+				// Portrait or square
+					android.opengl.Matrix.orthoM(projectionMatrix, 0, -1f, 1f, -aspectRatio, aspectRatio, -1f, 1f);
+				}
+				
+		mAspectRatio = aspectRatio;
 	}
 
 	/**
@@ -106,10 +117,10 @@ public class AirHockeyRenderer implements Renderer {
 		// Clear the rendering surface.
 		glClear(GL_COLOR_BUFFER_BIT);
 		// Draw the table.
-//		textureProgram.useProgram();
-//		textureProgram.setUniforms(projectionMatrix, texture);
-//		table.bindData(textureProgram);
-//		table.draw();
+		textureProgram.useProgram();
+		textureProgram.setUniforms(projectionMatrix, texture);
+		table.bindData(textureProgram);
+		table.draw();
 		// Draw the mallets.
 //		colorProgram.useProgram();
 //		colorProgram.setUniforms(projectionMatrix);
@@ -123,13 +134,28 @@ public class AirHockeyRenderer implements Renderer {
 	}
 
 	public void handleTouchDrag(float normalizedX, float normalizedY) {
+		if (mWidth > mHeight) {
+		// Landscape
+			normalizedX = normalizedX * mAspectRatio;
+		} else {
+		// Portrait or square
+			normalizedY = normalizedY * mAspectRatio;
+		}
 		Log.d("Drag", String.valueOf(normalizedX) + " , " + String.valueOf(normalizedX));
 		addNewPoint(normalizedX, normalizedY);
 	}
 
 	public void handleTouchPress(float normalizedX, float normalizedY) {
+		if (mWidth > mHeight) {
+		// Landscape
+			normalizedX = normalizedX * mAspectRatio;
+		} else {
+		// Portrait or square
+			normalizedY = normalizedY * mAspectRatio;
+		}
 		Log.d("Press", String.valueOf(normalizedX) + " , " + String.valueOf(normalizedX));
 		VERTEX_DATA = new float[5000];
+		java.util.Arrays.fill(VERTEX_DATA, -1f);
 		floatCounter = 0;
 		addNewPoint(normalizedX, normalizedY);
 	}

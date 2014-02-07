@@ -36,15 +36,15 @@ public class PLine {
 
 	public void bindDataAndDraw(ColorShaderProgram colorProgram, float[] points, int counter) {
 		bindData(colorProgram, points);
-		glDrawArrays(GL_LINE_STRIP, 0, counter/5);
+		glDrawArrays(GL_LINE_STRIP, 0, pointCounter * 2 - 2 );
 	}
 	
 	public void bindDataAndDrawWithThickness(ColorShaderProgram colorProgram, float[] points, int counter) {
-	//	float[] pointStrip = pointStrip(points);
-		float[] pointStrip = pointStrip(testPoints);
+		float[] pointStrip = pointStrip(points);
+	//	float[] pointStrip = pointStrip(testPoints);
 		
 		bindData(colorProgram, pointStrip);
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, pointStrip.length / 5);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, pointCounter * 2);
 	}
 	
 	private static float[] pointStrip(float[] points) {
@@ -62,6 +62,10 @@ public class PLine {
 
 			float[] nextpoint = getPoint(points, pointCounter + 1);
 			float[] previouspoint = getPoint(points, pointCounter - 1);
+			
+			if (point == null) {
+				break;
+			}
 			
 			pointCounter++;
 			
@@ -88,6 +92,10 @@ public class PLine {
 		result[2] = points[(counter * 5) + 2];
 		result[3] = points[(counter * 5) + 3];
 		result[4] = points[(counter * 5) + 4];
+		
+		if (result[0] == -1f) {
+			return null;
+		}
 		
 		return result;
 	}
