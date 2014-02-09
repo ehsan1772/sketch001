@@ -28,12 +28,20 @@ public class TextureShaderProgram extends ShaderProgram {
 	}
 
 	public void setUniforms(float[] matrix, int textureId) {
+		setMatrix(matrix);
+		setTexture(textureId);
+	}
+	
+	public void setMatrix(float[] matrix) {
 		// Pass the matrix into the shader program.
 		glUniformMatrix4fv(uMatrixLocation, 1, false, matrix, 0);
+	}
+	
+	public void setTexture(int textureid) {
 		// Set the active texture unit to texture unit 0.
 		glActiveTexture(GL_TEXTURE0);
 		// Bind the texture to this unit.
-		glBindTexture(GL_TEXTURE_2D, textureId);
+		glBindTexture(GL_TEXTURE_2D, textureid);
 		// Tell the texture uniform sampler to use this texture in the shader by
 		// telling it to read from texture unit 0.
 		glUniform1i(uTextureUnitLocation, 0);
@@ -45,5 +53,9 @@ public class TextureShaderProgram extends ShaderProgram {
 
 	public int getTextureCoordinatesAttributeLocation() {
 		return aTextureCoordinatesLocation;
+	}
+	
+	public int getTextureUnitLocation() {
+		return uTextureUnitLocation;
 	}
 }

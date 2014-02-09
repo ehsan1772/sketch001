@@ -28,7 +28,7 @@ import android.util.Log;
 import com.example.openglsample.programs.ColorShaderProgram;
 import com.example.openglsample.programs.TextureShaderProgram;
 
-public class AirHockeyRenderer implements Renderer {
+public class AirHockeyRenderer implements Renderer, SketchRenerer {
 	private final Context context;
 	private final float[] projectionMatrix = new float[16];
 	private final float[] modelMatrix = new float[16];
@@ -49,6 +49,7 @@ public class AirHockeyRenderer implements Renderer {
 	
 	
 	private int floatCounter;
+	private MatrixManager matrixManager;
 	
 	private static float[] VERTEX_DATA;
 
@@ -77,7 +78,7 @@ public class AirHockeyRenderer implements Renderer {
 		colorProgram = new ColorShaderProgram(context);
 		texture = TextureHelper.loadTexture(context, R.drawable.line);
 		
-		sq = new TexturedSquare(.2f, .2f, context,R.drawable.air_hockey_surface);
+		sq = new TexturedSquare(.2f, .2f, context,R.drawable.air_hockey_surface, this);
 	}
 
 	/**
@@ -100,6 +101,7 @@ public class AirHockeyRenderer implements Renderer {
 		mWidth = width;
 		mHeight = height;
 		
+		matrixManager = new MatrixManager(width, height);
 		final float aspectRatio = width > height ?
 				(float) width / (float) height :
 				(float) height / (float) width;
@@ -177,5 +179,16 @@ public class AirHockeyRenderer implements Renderer {
 			VERTEX_DATA[floatCounter++] = 0f;
 			VERTEX_DATA[floatCounter++] = 0f;
 		}
+	}
+
+	@Override
+	public ProgramManager getProgramManager() {
+		// TODO Auto-generated method stub
+		return new SKProgramManager(context, getMatrixManager());
+	}
+
+	@Override
+	public MatrixManager getMatrixManager() {
+		return matrixManager;
 	}
 }

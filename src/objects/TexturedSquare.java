@@ -2,6 +2,9 @@ package objects;
 
 import static android.opengl.GLES20.GL_TRIANGLE_STRIP;
 import static android.opengl.GLES20.glDrawArrays;
+
+import com.example.openglsample.SketchRenerer;
+
 import data.VertexArray;
 import util.TextureHelper;
 import android.content.Context;
@@ -9,8 +12,8 @@ import android.graphics.PointF;
 
 public class TexturedSquare extends TexturedShape {
 	
-	public TexturedSquare(float width, float height, Context context, int textureId) {
-		super(context);
+	public TexturedSquare(float width, float height, Context context, int textureId, SketchRenerer sketchRenderer) {
+		super(context, sketchRenderer);
 		geometry.add(new PointF(-width/2f, height/2f));
 		geometry.add(new PointF(width/2f, height/2f));
 		geometry.add(new PointF(-width/2f, -height/2f));
