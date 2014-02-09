@@ -18,9 +18,8 @@ import javax.microedition.khronos.opengles.GL10;
 
 import objects.Mallet;
 import objects.PLine;
-import objects.Square;
 import objects.Table;
-import util.MatrixHelper;
+import objects.TexturedSquare;
 import util.TextureHelper;
 import android.content.Context;
 import android.opengl.GLSurfaceView.Renderer;
@@ -46,7 +45,7 @@ public class AirHockeyRenderer implements Renderer {
 	
 	int screenStart = 0;
 	
-	Square sq;
+	TexturedSquare sq;
 	
 	
 	private int floatCounter;
@@ -78,7 +77,7 @@ public class AirHockeyRenderer implements Renderer {
 		colorProgram = new ColorShaderProgram(context);
 		texture = TextureHelper.loadTexture(context, R.drawable.line);
 		
-		sq = new Square(.2f, .2f, context,R.drawable.air_hockey_surface);
+		sq = new TexturedSquare(.2f, .2f, context,R.drawable.air_hockey_surface);
 	}
 
 	/**
