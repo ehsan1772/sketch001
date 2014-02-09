@@ -58,7 +58,7 @@ public class Table {
 	}
 
 	public void draw() {
-		glDrawArrays(GL_TRIANGLE_STRIP, 0, 18);
+		glDrawArrays(GL_TRIANGLE_STRIP, 0, 20);
 	}
 
 }

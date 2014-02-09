@@ -18,6 +18,7 @@ import javax.microedition.khronos.opengles.GL10;
 
 import objects.Mallet;
 import objects.PLine;
+import objects.Square;
 import objects.Table;
 import util.MatrixHelper;
 import util.TextureHelper;
@@ -42,6 +43,10 @@ public class AirHockeyRenderer implements Renderer {
 	private float mWidth;
 	private float mHeight;
 	private float mAspectRatio;
+	
+	int screenStart = 0;
+	
+	Square sq;
 	
 	
 	private int floatCounter;
@@ -72,6 +77,8 @@ public class AirHockeyRenderer implements Renderer {
 		textureProgram = new TextureShaderProgram(context);
 		colorProgram = new ColorShaderProgram(context);
 		texture = TextureHelper.loadTexture(context, R.drawable.line);
+		
+		sq = new Square(.2f, .2f, context,R.drawable.air_hockey_surface);
 	}
 
 	/**
@@ -131,6 +138,9 @@ public class AirHockeyRenderer implements Renderer {
 		colorProgram.setUniforms(projectionMatrix);
 		pline.bindDataAndDrawWithThickness(colorProgram, VERTEX_DATA, floatCounter);
 		//pline.draw();
+		
+		
+		sq.draw(0f,0f, projectionMatrix);
 	}
 
 	public void handleTouchDrag(float normalizedX, float normalizedY) {
